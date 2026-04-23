@@ -217,11 +217,11 @@
             color: white;
         }
 
-        .error-message {
+        .message-box {
             margin-top: 18px;
             padding: 16px 18px;
             border-radius: 20px;
-            background: rgba(121, 71, 255, 0.18);
+            background: rgba(255, 255, 255, 0.14);
             color: #f4efff;
             border: 1px solid rgba(255, 255, 255, 0.18);
             font-size: 0.95rem;
@@ -286,7 +286,7 @@
             </div>
         </div>
 
-        <div id="errorMessage" class="error-message" style="display:none;"></div>
+        <div id="messageBox" class="message-box" style="display:none;"></div>
     </div>
 </div>
 
@@ -294,20 +294,21 @@
     async function getWeather() {
         const city = document.getElementById('city').value.trim();
         const apiKey = 'YOUR_API_KEY_HERE'; // Replace with your OpenWeatherMap API key
-        const errorElement = document.getElementById('errorMessage');
+        const messageElement = document.getElementById('messageBox');
 
-        errorElement.style.display = 'none';
-        errorElement.textContent = '';
+        messageElement.style.display = 'none';
+        messageElement.textContent = '';
 
         if (!city) {
-            errorElement.textContent = 'Please enter a city name.';
-            errorElement.style.display = 'block';
+            messageElement.textContent = 'Please enter a city name.';
+            messageElement.style.display = 'block';
             return;
         }
 
         if (apiKey === 'YOUR_API_KEY_HERE') {
-            errorElement.textContent = 'Please replace YOUR_API_KEY_HERE with your OpenWeatherMap API key.';
-            errorElement.style.display = 'block';
+            showSampleWeather(city || 'Hyderabad');
+            messageElement.textContent = 'No API key provided. Showing sample weather data.';
+            messageElement.style.display = 'block';
             return;
         }
 
@@ -326,9 +327,21 @@
             updateCurrentWeather(data);
             fetchForecast(data.coord.lat, data.coord.lon, apiKey);
         } catch (error) {
-            errorElement.textContent = 'Unable to fetch weather data. Check your internet connection.';
-            errorElement.style.display = 'block';
+            messageElement.textContent = 'Unable to fetch weather data. Check your internet connection.';
+            messageElement.style.display = 'block';
         }
+    }
+
+    function showSampleWeather(city) {
+        const sampleData = {
+            weather: [{ icon: '01d', description: 'clear day' }],
+            main: { temp: 30, humidity: 58 },
+            wind: { speed: 4.2 },
+            name: city || 'Hyderabad',
+            sys: { country: 'IN' },
+            dt: Math.floor(Date.now() / 1000)
+        };
+        updateCurrentWeather(sampleData);
     }
 
     function updateCurrentWeather(data) {
